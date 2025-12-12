@@ -1,0 +1,106 @@
+primary_name: "Yaxuan Wang"
+secondary_name: "Camellia"
+navbar_name: "Yaxuan Wang"
+
+positions:
+- name: Ph.D. Candidate in Computer Science
+  affiliation: University of California, Santa Cruz
+- name: University of California, Santa Cruz
+  logo: /assets/images/badges/UCSC.png  # Logo is optional
+
+
+email: "yizhixiaozhu24@gmail.com"
+# cv_link: link-to-your-cv-file
+gscholar: 2J96C48AAAAJ&hl=en # This is an example, replace it with your own Google Scholar ID
+github: supergirl-os
+# twitter: your_twitter_id  # Do not include the '@' symbol
+# wechat_qrcode: /assets/images/etc/wechat.jpg
+# wechat_prompt: >-
+#   Please tell me your <strong>name</strong> and <strong>affiliation</strong> (current or past) when adding my wechat. Thanks!
+linkedin: yaxuan-wang-a2a37a297
+# orcid: 0000-0000-0000-0000
+
+short_bio_text_justify: false
+short_bio: >-
+  <p>
+    I am a third-year Ph.D. Candidate in Computer Science and Engineering at the <a href="https://www.ucsc.edu/" target="_blank">University of California, Santa Cruz</a>, advised by <a href="http://www.yliuu.com/" target="_blank">Yang Liu</a>. 
+    My research currently focuses on <strong>LLM alignment and safety, LLM Reasoning, and responsible LLM agents</strong>. I also work on LLM unlearning. I study how to adapt and control LLMs to ensure safe, robust,
+    and reliable behavior. My long-term goal is to develop safe, robust, generalizable, and trustworthy LLM-based systems.
+    I have been working as a Research Scientist Intern focusing on conducting high impact research in the Generative AI space at <a href="https://www.accenture.com/us-en/services/data-ai/" target="_blank">Accenture Data & AI Research Center</a> since June 2024.
+  </p>
+  <p>
+    More about my research interests: <br/>
+    • LLM Alignment, Unlearning, Reasoning, and Post-training <br/>
+    • LLM Agents: Safe, scalable, and trustworthy LLM-based agentic systems <br/>
+    • Trustworthy Machine Learning: Fairness, Interpretability, Robustness <br/>
+    • Representation Learning & Learning from Dynamic and Noisy Data <br/><br/>
+
+    I am interested in building intelligent agents or models that can learn from various data sources (e.g., images, audio, and text) and automate decision-making processes in uncertain environments to solve multiple real-world tasks realiably and efficiently.
+    I love the process of giving machines the intelligence to address real-world problems.
+  </p>
+
+portrait_url: /assets/images/photos/portrait.jpg
+portrait_caption: >-
+  Yaxuan Wang, Ph.D. Candidate at University of California, Santa Cruz
+
+education:
+- name: University of California, Santa Cruz
+  logo: /assets/images/badges/UCSC.png
+  position: >- 
+    Computer Science and Engineering<br/>
+    Ph.D. Candidate <br/>
+    Advisor: Prof. Yang Liu <br/>
+    GPA: 3.92/4.0 <br/>
+  date: Sep. 2023 - present
+- name: Sichuan University
+  logo: /assets/images/badges/scu.png
+  position: >-  
+    B.S. in Computer Science <br/>
+    Top-Talent Training Program* <br/>
+    Advisor: <a href="http://www.scubrl.org/qjzhao">Prof. Qijun Zhao</a> <br/>
+    GPA: 3.85/4.0 <br/>
+    <em>*A prestigious national program designed to cultivate outstanding
+    students in fundamental disciplines through enhanced, research-oriented coursework.</em> <br/>
+  date: Sep. 2019 - Jun. 2023
+
+
+
+# experience:
+# - name: Peking University
+#   logo: /assets/images/badges/PKU_red.png
+#   position: Research Intern
+#   date: Sep. 2019 - Jul. 2021
+
+awards:
+- name: Anti-Racist Research Fellowship, UCSC
+  date: 2024
+- name: Dean’s Fellowship, UCSC  
+  date: 2023
+- name: Computer Science Polaris Star Award, SCU
+  date: 2023
+- name: Scholarship in Honor of Chinese Contemporary Scientists, SCU
+  date: 2023
+- name: Top 100 Outstanding Students Award, SCU
+  date: 2023
+- name: <a href="https://www.robomaster.com/en-US/robo/icra">RoboMaster University AI Challenge</a> - International Third Prize
+  date: 2022
+- name: National Scholarship
+  date: 2021
+- name: CK Power Scholarship
+  date: 2021
+- name: First-Class Scholarship, SCU
+  date: 2021
+- name: <a href="https://jsjds.blcu.edu.cn/">China University Student Computer Design Competition (14th)</a> — National First Prize
+  date: 2021
+- name: <a href="https://www.robomaster.com/en-US/robo/rm?djifrom=nav">RoboMaster University Championship</a> — South Division First Prize
+  date: 2021
+- name: <a href="https://www.robomaster.com/en-US/robo/college-league?djifrom=nav">RoboMaster University League</a> — Provincial First Prize
+  date: 2021
+- name: Outstanding Student Award, SCU
+  date: 2020
+- name: Outstanding Cadre, SCU Library Volunteer Team
+  date: 2020
+- name: SCU Engineering Training Competition — First Prize
+  date: 2020
+- name: College-level English Speech Contest — Second Prize
+  date: 2019
