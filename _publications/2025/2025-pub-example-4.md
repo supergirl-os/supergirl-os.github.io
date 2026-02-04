@@ -1,12 +1,12 @@
 ---
 title:          "DRAGON: Guard LLM Unlearning in Context via Negative Detection and Reasoning"
-date:           2025-5-18 
+date:           2026-1-18 
 selected:       true
-pub:            "Machine Unlearning for Generative AI Workshop for ICML2025; "
+pub:            "The Fourteenth International Conference on Learning Representations (ICLR)"
 # pub_pre:        "Submitted to "
-pub_post:       'Under review.'
+# pub_post:       'Under review.'
 # pub_last:       ' <span class="badge badge-pill badge-publication badge-success">Spotlight</span>'
-pub_date:       "2025"
+pub_date:       "2026"
 
 # abstract: >-
 #   When the cover image is not provided, it will generate a random colorful bubble images as the cover image using the <code>bubble_visual_hash.js</code> script.
