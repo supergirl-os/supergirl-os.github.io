@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Template: https://github.com/luost26/academic-homepage -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>OPD 基础介绍：为什么 LLM RL 训练会悄悄变成 Off-Policy - Yaxuan Wang</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css" integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/global.css">
+</head>
+<body class="bg-light" >
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top mb-5 shadow-sm">
+    <div class="container-lg">
+        <a class="navbar-brand"><strong>Yaxuan Wang</strong></a>
+        <button class="navbar-toggler" style="font-size: 1em; padding: 0.5em;" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-map"></i> Menu
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                
+                <li class="nav-item ">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                
+                <li class="nav-item ">
+                    <a class="nav-link" href="/publications">Publications</a>
+                </li>
+                
+                <li class="nav-item ">
+                    <a class="nav-link" href="/showcase">Showcase</a>
+                </li>
+                
+                <li class="nav-item ">
+                    <a class="nav-link" href="/blog">Blog</a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <div class="container-lg">
+        <div class="row">
+    <article class="col-lg-9 mx-auto blog-post bg-white shadow-sm rounded-xl">
+        <header class="blog-post-header">
+            <div class="text-muted small mb-2">2026-06-03</div>
+            <h1>OPD 基础介绍：为什么 LLM RL 训练会悄悄变成 Off-Policy</h1>
+            
+        </header>
+
+        <div class="blog-post-content">
+            <p>在 LLM 的 post-training 中，我们常常会说某个 RL 算法是 “on-policy” 的：模型先生成回答，再根据这些回答计算 reward 和 policy gradient，然后更新自己。听起来数据来自当前模型，所以训练应该是 on-policy 的。</p>
+
+<p>但在真实的大规模 LLM RL 系统里，事情没有这么干净。生成样本的 policy 和真正用于计算梯度的 policy 之间，经常会出现细微但持续累积的差异。这种差异可以理解为 <strong>Off-Policy Drift，简称 OPD</strong>。</p>
+
+<h2 id="1-什么是-off-policy-drift">1. 什么是 Off-Policy Drift？</h2>
+
+<p>最直观地说，OPD 指的是：</p>
+
+<blockquote>
+  <p>用来生成数据的模型分布，和用来训练更新的模型分布，不再完全一致。</p>
+</blockquote>
+
+<p>在强化学习里，我们通常区分两个 policy：</p>
+
+<ul>
+  <li><strong>Behavior policy</strong>：实际采样数据的 policy，也就是 rollout 时生成 response 的模型。</li>
+  <li><strong>Target / training policy</strong>：训练时被优化的 policy，也就是计算 log probability、loss 和 gradient 的模型。</li>
+</ul>
+
+<p>如果这两个 policy 完全一致，训练更接近 on-policy。<br />
+如果它们不一致，训练就会带有 off-policy 成分。</p>
+
+<p>对 LLM 来说，一条 response 是 token 序列。假设 rollout policy 生成了 token $y_t$，训练时当前 policy 也会给这个 token 一个概率。两者的比例可以写成：</p>
+
+\[r_t = \frac{\pi_\theta(y_t \mid x, y_{&lt;t})}{\mu(y_t \mid x, y_{&lt;t})}\]
+
+<p>其中 $\mu$ 是生成数据的 behavior policy，$\pi_\theta$ 是训练时的 policy。<br />
+如果 $r_t$ 长期偏离 1，说明训练看到的数据和当前 policy 的真实分布之间出现了 mismatch。</p>
+
+<h2 id="2-为什么-llm-rl-里会出现-opd">2. 为什么 LLM RL 里会出现 OPD？</h2>
+
+<p>在小规模教科书式 RL 里，我们可能默认采样和训练发生在同一个模型、同一个环境、同一个时间点。但现代 LLM RL pipeline 通常更复杂。</p>
+
+<p>常见来源包括：</p>
+
+<h3 id="21-rollout-和-training-使用不同引擎">2.1 rollout 和 training 使用不同引擎</h3>
+
+<p>生成 response 时，系统可能使用高吞吐 inference engine；训练时则使用另一个 training framework。即使它们加载的是“同一份权重”，由于精度、kernel、并行方式、attention 实现不同，log probability 也可能不完全一致。</p>
+
+<p>这类差异看起来像工程细节，但它会直接影响 policy ratio，进而影响 gradient。</p>
+
+<h3 id="22-权重同步存在延迟">2.2 权重同步存在延迟</h3>
+
+<p>大规模训练为了提高吞吐，常常让 rollout worker 和 trainer 异步运行。rollout worker 可能还在用旧权重生成样本，而 trainer 已经更新了几步。</p>
+
+<p>于是，一个 batch 里的 response 可能来自几步之前的 policy。等它被拿来训练时，当前 policy 已经变了。</p>
+
+<h3 id="23-同一个-batch-被训练多轮">2.3 同一个 batch 被训练多轮</h3>
+
+<p>PPO 类算法常会对同一批 rollout 数据做 multiple epochs。第一轮更新时，这些数据还比较“新鲜”；后面几轮时，policy 已经被更新过，数据就逐渐变旧。</p>
+
+<p>这也是一种 staleness。</p>
+
+<h3 id="24-moe量化和非确定性也会放大差异">2.4 MoE、量化和非确定性也会放大差异</h3>
+
+<p>如果模型使用 MoE routing、FP8/INT8 量化、不同 batch size 下的非确定性 kernel，同一个 prefix 下的 log probability 都可能发生微小偏移。单个 token 的差异也许不大，但长序列上会累积。</p>
+
+<h2 id="3-opd-为什么危险">3. OPD 为什么危险？</h2>
+
+<p>OPD 的核心问题不是“数据旧了一点”本身，而是：<strong>gradient 可能不再准确反映当前 policy 应该如何改进。</strong></p>
+
+<p>当训练 policy 和 rollout policy 差别较大时，模型可能会：</p>
+
+<ul>
+  <li>过度相信一些当前 policy 其实很少会生成的 token；</li>
+  <li>对 stale samples 给出过大的更新；</li>
+  <li>让 importance ratio 爆炸或塌缩；</li>
+  <li>使 PPO clipping 频繁触发，导致有效学习信号变弱；</li>
+  <li>在极端情况下造成 RL training collapse。</li>
+</ul>
+
+<p>可以把它想象成：你根据一个旧版本模型的行为轨迹，去惩罚或奖励一个已经变化了的新版本模型。如果这两个版本差异不大，问题还可以接受；如果差异持续累积，训练信号就会越来越偏。</p>
+
+<h2 id="4-如何诊断-opd">4. 如何诊断 OPD？</h2>
+
+<p>一个最直接的诊断方式是看 <strong>log probability mismatch</strong>。</p>
+
+<p>比如，对于 rollout 中的每个 token，我们记录：</p>
+
+<ul>
+  <li>rollout 时 behavior policy 给出的 log probability；</li>
+  <li>training 时当前 policy 重新计算出的 log probability；</li>
+  <li>两者的差值或 ratio。</li>
+</ul>
+
+<p>常见指标包括：</p>
+
+<h3 id="41-per-token-log-ratio">4.1 per-token log-ratio</h3>
+
+\[\log r_t = \log \pi_\theta(y_t \mid x, y_{&lt;t}) - \log \mu(y_t \mid x, y_{&lt;t})\]
+
+<p>如果 $\log r_t$ 的分布很宽，说明 policy mismatch 比较严重。</p>
+
+<h3 id="42-sequence-level-ratio">4.2 sequence-level ratio</h3>
+
+<p>一整条 response 的 mismatch 可以粗略看作 token-level ratio 的累积：</p>
+
+\[\log r = \sum_t \log r_t\]
+
+<p>长序列里，即使每个 token 的漂移很小，累积后也可能很大。</p>
+
+<h3 id="43-clipping-rate">4.3 clipping rate</h3>
+
+<p>如果 PPO 的 ratio 经常被 clip，说明 policy 更新已经频繁触碰 trust region。高 clipping rate 不一定全是 OPD 导致的，但它是一个很值得看的 warning signal。</p>
+
+<h3 id="44-stale-step--policy-lag">4.4 stale step / policy lag</h3>
+
+<p>记录每个 sample 生成时的 policy step，以及它被训练消费时的 policy step。两者差值越大，sample 越 stale。</p>
+
+<h2 id="5-如何缓解-opd">5. 如何缓解 OPD？</h2>
+
+<p>OPD 很难完全消除，但可以被监控和控制。</p>
+
+<h3 id="51-更频繁地同步权重">5.1 更频繁地同步权重</h3>
+
+<p>让 rollout worker 更快拿到最新 policy，可以减少 policy lag。代价是系统吞吐可能下降。</p>
+
+<h3 id="52-使用-importance-sampling-correction">5.2 使用 importance sampling correction</h3>
+
+<p>如果我们知道 behavior policy 和当前 policy 的概率比例，就可以用 importance weight 修正 off-policy bias。简单说，就是让训练时意识到：“这个 token 是旧 policy 生成的，当前 policy 对它的概率已经变了。”</p>
+
+<p>但 importance sampling 也有风险：ratio 太大时会引入高方差，所以通常还需要 clipping、normalization 或 rejection sampling。</p>
+
+<h3 id="53-控制同一批数据的重复训练次数">5.3 控制同一批数据的重复训练次数</h3>
+
+<p>减少 multi-epoch update 可以降低 stale data 的使用程度。代价是 sample efficiency 可能下降。</p>
+
+<h3 id="54-监控训练和-inference-的-logprob-一致性">5.4 监控训练和 inference 的 logprob 一致性</h3>
+
+<p>如果 rollout engine 和 training engine 对同一批 token 算出的 logprob 差异很大，说明系统层面已经引入 mismatch。这个问题应该先被当作 infrastructure bug 或 numerical mismatch 来排查，而不只是算法问题。</p>
+
+<h2 id="6-opd-和-on-policy--off-policy-的关系">6. OPD 和 on-policy / off-policy 的关系</h2>
+
+<p>OPD 的一个重要启发是：LLM RL 里的 “on-policy” 不是一个二元标签，而是一个程度问题。</p>
+
+<p>一个训练系统可以在算法设计上声称 on-policy，但在实际执行时因为异步、量化、重复训练、推理训练不一致等因素，表现出 off-policy 特征。</p>
+
+<p>所以更有用的问题不是：</p>
+
+<blockquote>
+  <p>这个算法是不是 on-policy？</p>
+</blockquote>
+
+<p>而是：</p>
+
+<blockquote>
+  <p>rollout data 和 training policy 的 mismatch 有多大？这个 mismatch 是否被测量、限制和校正？</p>
+</blockquote>
+
+<h2 id="7-小结">7. 小结</h2>
+
+<p>OPD 可以理解为 LLM RL 中的 policy 分布漂移问题。它来自 rollout policy 和 training policy 之间的差异，可能由异步训练、权重延迟、引擎差异、量化、multi-epoch update 等因素引入。</p>
+
+<p>它之所以重要，是因为 policy gradient 对数据分布非常敏感。看似很小的 logprob mismatch，在长序列和大规模训练中可能累积成严重的优化偏差。</p>
+
+<p>对我来说，OPD 最值得记住的一句话是：</p>
+
+<blockquote>
+  <p>LLM RL 的稳定性不仅取决于 reward 和 loss，也取决于系统是否真的在用“当前 policy 的数据”训练当前 policy。</p>
+</blockquote>
+
+<h2 id="references">References</h2>
+
+<ul>
+  <li>Chris Liu, <a href="https://chrisliu298.ai/posts/off-policy-drift-in-llm-rl/">Off-Policy Drift in LLM RL</a>, 2026.</li>
+</ul>
+
+        </div>
+    </article>
+</div>
+
+    </div>
+    <footer class="footer border-top py-2 mt-5 bg-white small">
+    <div class="container-lg">
+        <div class="row my-3">
+            <div class="col-6">
+                <div class="text-muted">
+                    <i>Last updated: Jun 2026</i>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="text-right text-muted">
+                    <a href="https://github.com/luost26/academic-homepage" target="_blank"><i class="fas fa-pencil-ruler"></i> academic-homepage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/github-buttons/2.14.2/buttons.min.js" integrity="sha512-OYwZx04hKFeFNYrWxIyo3atgGpb+cxU0ENWBZs72X7T9U+NoHPM1ftUn/Mfw7dRDXrqWA6M1wBg6z6fGE32aeA==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false}
+              ],
+              throwOnError : false
+            });
+        });
+    </script>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/bubble_visual_hash.js"></script>
+    <script src="/assets/js/semantic_scholar_citation_count.js"></script>
+</body>
+</html>

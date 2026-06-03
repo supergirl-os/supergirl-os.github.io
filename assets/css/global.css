@@ -90,3 +90,36 @@ div.lazy {
     font-family: Source Code Pro, monospace;
 }
 
+.blog-list-item {
+    padding: 1.25rem 1.5rem;
+}
+
+.blog-list-item h4 a {
+    color: #212529;
+}
+
+.blog-list-item h4 a:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.blog-post {
+    padding: 2rem;
+}
+
+.blog-post-header {
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+}
+
+.blog-post-content {
+    font-size: 1.05rem;
+    line-height: 1.75;
+}
+
+.blog-post-content pre {
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}

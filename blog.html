@@ -1,0 +1,34 @@
+---
+layout: default
+title : Blog
+navbar_title: Blog
+container_class: container-lg
+---
+
+{% assign posts = site.blog | sort: "date" | reverse %}
+
+<div class="row">
+    <div class="col-lg-9 mx-auto">
+        <h1 class="pt-3 mb-4">Blog</h1>
+
+        {% if posts.size > 0 %}
+        <div class="bg-white shadow-sm rounded-xl">
+            {% for post in posts %}
+            <article class="blog-list-item {% unless forloop.last %}border-bottom{% endunless %}">
+                <div class="text-muted small mb-1">{{ post.date | date: "%Y-%m-%d" }}</div>
+                <h4 class="mb-2">
+                    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                </h4>
+                {% if post.excerpt %}
+                <p class="mb-0 text-muted">{{ post.excerpt | strip_html }}</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white shadow-sm rounded-xl p-4">
+            <p class="mb-0 text-muted">No posts yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>

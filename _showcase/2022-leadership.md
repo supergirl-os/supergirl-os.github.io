@@ -1,7 +1,7 @@
 ---
 show: true
 title: "Leadership & Team Building"
-date: 2022-12-06
+date: 2024-12-03
 width: 4
 ---
 <div class="p-4">

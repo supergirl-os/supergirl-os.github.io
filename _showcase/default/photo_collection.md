@@ -1,7 +1,7 @@
 ---
 show: true
 width: 4
-date: 2022-09-12 00:01:00 +0800
+date: 2024-12-02
 height: 495px
 images:
 - src: /assets/images/etc/view.png
@@ -17,4 +17,7 @@ images:
 - src: /assets/images/etc/tahoe.png
 ---
 
+<div class="p-4 pb-0">
+  <h3>Album</h3>
+</div>
 {% include widgets/carousel.html id=page.id images=page.images height=page.height %}

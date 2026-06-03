@@ -1,0 +1,19 @@
+---
+layout: default
+---
+
+<div class="row">
+    <article class="col-lg-9 mx-auto blog-post bg-white shadow-sm rounded-xl">
+        <header class="blog-post-header">
+            <div class="text-muted small mb-2">{{ page.date | date: "%Y-%m-%d" }}</div>
+            <h1>{{ page.title }}</h1>
+            {% if page.subtitle %}
+            <p class="lead text-muted mb-0">{{ page.subtitle }}</p>
+            {% endif %}
+        </header>
+
+        <div class="blog-post-content">
+            {{ content }}
+        </div>
+    </article>
+</div>
