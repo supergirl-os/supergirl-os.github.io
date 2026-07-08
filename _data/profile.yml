@@ -24,9 +24,9 @@ short_bio_text_justify: false
 short_bio: >-
   <p>
     I am a third-year Ph.D. Candidate in Computer Science and Engineering at the <a href="https://www.ucsc.edu/" target="_blank">University of California, Santa Cruz</a>, advised by <a href="http://www.yliuu.com/" target="_blank">Yang Liu</a>. 
-    My research currently focuses on <strong>LLM alignment and safety, LLM Reasoning, and responsible LLM agents</strong>. I also work on LLM unlearning. I study how to adapt and control LLMs to ensure safe, robust,
+    My research currently focuses on <strong>LLM alignment and safety, LLM reasoning, and responsible LLM agents</strong>. I also work on LLM unlearning. I study how to adapt and control LLMs to ensure safe, robust,
     and reliable behavior. My long-term goal is to develop safe, robust, generalizable, and trustworthy LLM-based systems.
-    I have been working as a Research Scientist Intern focusing on conducting high impact research in the Generative AI space at <a href="https://www.accenture.com/us-en/services/data-ai/" target="_blank">Accenture Data & AI Research Center</a> since June 2024.
+    Since June 2026, I have been a Research Scientist Intern at <a href="https://www.zoom.com/" target="_blank">Zoom</a>, working on LLM agents and agentic AI systems. Previously, I worked as a Research Scientist Intern at <a href="https://www.accenture.com/us-en/services/data-ai/" target="_blank">Accenture Data & AI Research Center</a>, focusing on high-impact research in the Generative AI space.
   </p>
   <p>
     More about my research interests: <br/>
@@ -34,7 +34,7 @@ short_bio: >-
     • LLM Agents: Safe, scalable, and trustworthy LLM-based agentic systems <br/>
     • Trustworthy Machine Learning: Fairness, Interpretability, Robustness <br/>
 
-    I am interested in building intelligent agents or models that can learn from various data sources (e.g., images, audio, and text) and automate decision-making processes in uncertain environments to solve multiple real-world tasks realiably and efficiently.
+    I am interested in building intelligent agents or models that can learn from various data sources (e.g., images, audio, and text) and automate decision-making processes in uncertain environments to solve multiple real-world tasks reliably and efficiently.
     I love the process of giving machines the intelligence to address real-world problems.
   </p>
 

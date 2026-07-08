@@ -1,12 +1,12 @@
 ---
 title:          "PromptBridge: Cross-Model Prompt Transfer for Large Language Models"
-date:           2025-12-01 
+date:           2026-07-08 
 selected:       true
-pub:            "Arxiv"
+pub:            "The Conference on Language Modeling (COLM)"
 # pub_pre:        "Submitted to "
 # pub_post:       'Under review.'
 # pub_last:       ' <span class="badge badge-pill badge-publication badge-success">Spotlight</span>'
-pub_date:       "2025"
+pub_date:       "2026"
 
 # abstract: >-
 #   When the cover image is not provided, it will generate a random colorful bubble images as the cover image using the <code>bubble_visual_hash.js</code> script.
